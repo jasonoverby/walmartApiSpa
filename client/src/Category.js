@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom'
 import axios from 'axios';
 
 let key = 0;
@@ -15,32 +16,44 @@ class Category extends Component {
     this.setState({ products: response.data });
   }
 
+  getProductElements(products) {
+    return products.map(product => {
+      key += 1;
+      return <li
+        key={key}>
+        <ul style={{
+          textAlign: 'left',
+          marginBottom: '20px',
+        }}>
+          {['itemId', 'name', 'categoryPath'].map(productProperty => (
+            <li key={`${productProperty}-${key}`}>
+              <b>{productProperty}:</b> {product[productProperty]}
+            </li>
+          ))}
+        </ul>
+      </li>
+    });
+  }
+
   render() {
     let productElements = <li>...loading products</li>;
     const { products } = this.state;
     if (products.length !== 0) {
-      productElements = products.map(product => {
-        key += 1;
-        return <li
-          key={key}>
-          <ul style={{
-            textAlign: 'left',
-            marginBottom: '20px',
-          }}>
-            {['itemId', 'name', 'categoryPath'].map(productProperty => (
-              <li key={`${productProperty}-${key}`}>
-                <b>{productProperty}:</b> {product[productProperty]}
-              </li>
-            ))}
-          </ul>
-        </li>
-      });
+      productElements = this.getProductElements(products);
     }
 
     return (
-      <ul>
-        {productElements}
-      </ul>
+      <div>
+        <ul>
+          {productElements}
+        </ul>
+
+        <Link
+          to='/'
+        >
+          Search Products
+        </Link>
+      </div>
     );
   }
 }
